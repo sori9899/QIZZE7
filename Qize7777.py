@@ -40,8 +40,8 @@ def loadImage(fname):
         tmpList = []  # inImage의 한 행을 구성할 리스트
         for k in range(0, YSIZE):
             data = int(ord(fp.read(1)))  # 파일을 1byte씩 읽은 후, 고유값을 int형으로 변경
-            tmpList.append(data)  # tmpLIst에 순차적으로 추가
-        inImage.append(tmpList)  # tmpList가 한 행을 구성했다는 그 리스트를 inimage에 주가하여 행렬 구성
+            tmpList.append(data)  # tmpList에 순차적으로 추가
+        inImage.append(tmpList)  # tmpList가 한 행을 구성했다는 그 리스트를 inImage에 추가하여 행렬 구성
 
     fp.close()
 
@@ -64,52 +64,49 @@ def func_exit():
 
 def Make_B():
     try:
-        while True:
-            global XSIZE, YSIZE, inImage
-            rgbString = ""
-            for i in range(0, XSIZE):
-                tmpString = ""
-                for k in range(0, YSIZE):
-                    data = inImage[i][k] + 128
-                    if data > 255:  # 최대 범위인 255를 넘어가는 데이터의 값을 255로 설정
-                        data = 255
-                    tmpString += "#%02x%02x%02x " % (data, data, data)  # x 뒤에 한칸 공백
-                rgbString += "{" + tmpString + "} "  # } 뒤에 한칸 공백
-            paper.put(rgbString)
+        global XSIZE, YSIZE, inImage
+        rgbString = ""
+        for i in range(0, XSIZE):
+            tmpString = ""
+            for k in range(0, YSIZE):
+                data = inImage[i][k] + 128
+                if data > 255:  # 최대 범위인 255를 넘어가는 데이터의 값을 255로 설정
+                    data = 255
+                tmpString += "#%02x%02x%02x " % (data, data, data)  # x 뒤에 한칸 공백
+            rgbString += "{" + tmpString + "} "  # } 뒤에 한칸 공백
+        paper.put(rgbString)
     except IndexError:
         messagebox.showinfo(title="ERROR!", message="사진을 먼저 추가해주세요.")
 
 
 def Make_D():
     try:
-        while True:
-            global XSIZE, YSIZE, inImage
-            rgbString = ""
-            for i in range(0, XSIZE):
-                tmpString = ""
-                for k in range(0, YSIZE):
-                    data = inImage[i][k] - 128
-                    if data < 0:  # 최소 범위인 0보다 작은 데이터의 값을 0으로 설정
-                        data = 0
-                    tmpString += "#%02x%02x%02x " % (data, data, data)  # x 뒤에 한칸 공백
-                rgbString += "{" + tmpString + "} "  # } 뒤에 한칸 공백
-            paper.put(rgbString)
+        global XSIZE, YSIZE, inImage
+        rgbString = ""
+        for i in range(0, XSIZE):
+            tmpString = ""
+            for k in range(0, YSIZE):
+                data = inImage[i][k] - 128
+                if data < 0:  # 최소 범위인 0보다 작은 데이터의 값을 0으로 설정
+                    data = 0
+                tmpString += "#%02x%02x%02x " % (data, data, data)  # x 뒤에 한칸 공백
+            rgbString += "{" + tmpString + "} "  # } 뒤에 한칸 공백
+        paper.put(rgbString)
     except IndexError:
         messagebox.showinfo(title="ERROR!", message="사진을 먼저 추가해주세요.")
 
 
 def Make_deca():
     try:
-        while True:
-            global XSIZE, YSIZE, inImage
-            rgbString = ""
-            for i in range(0, XSIZE):
-                tmpString = ""
-                for k in range(0, YSIZE):
-                    data = 255 - inImage[i][k]  # 흑백 반전
-                    tmpString += "#%02x%02x%02x " % (data, data, data)  # x 뒤에 한칸 공백
-                rgbString += "{" + tmpString + "} "  # } 뒤에 한칸 공백
-            paper.put(rgbString)
+        global XSIZE, YSIZE, inImage
+        rgbString = ""
+        for i in range(0, XSIZE):
+            tmpString = ""
+            for k in range(0, YSIZE):
+                data = 255 - inImage[i][k]  # 흑백 반전
+                tmpString += "#%02x%02x%02x " % (data, data, data)  # x 뒤에 한칸 공백
+            rgbString += "{" + tmpString + "} "  # } 뒤에 한칸 공백
+        paper.put(rgbString)
     except IndexError:
         messagebox.showinfo(title="ERROR!", message="사진을 먼저 추가해주세요.")
 
