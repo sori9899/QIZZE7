@@ -18,13 +18,15 @@ def func_open():
     if canvas != None:  # 두 번 이상 새로운 파일을 불러오는 경우 실행
         canvas.destroy()
 
+    loadImage(filename)  # RAW 파일 데이터 저장
+
     # 캔버스 생성 (아직 점을 찍을 종이만 생성, 아직 사진 삽입X)
+    window.geometry(str(XSIZE)+'x'+str(YSIZE))
     canvas = Canvas(window, height=XSIZE, width=YSIZE)
     paper = PhotoImage(width=XSIZE, height=YSIZE)
     canvas.create_image((XSIZE / 2, YSIZE / 2), image=paper, state="normal")
 
-    loadImage(filename)  # RAW 파일 데이터 저장
-    displayImage()  # 메모리 --> 화면
+    displayImage(inImage)  # 메모리 --> 화면
 
     canvas.pack()
 
@@ -45,13 +47,13 @@ def loadImage(fname):
 
     fp.close()
 
-def displayImage():
+def displayImage(image):
     global XSIZE, YSIZE, inImage, paper
     rgbString = ""
     for i in range(0, XSIZE):
         tmpString = ""
         for k in range(0, YSIZE):
-            data = inImage[i][k]
+            data = image[i][k]
             tmpString += "#%02x%02x%02x " % (data, data, data)  # x 뒤에 한칸 공백
         rgbString += "{" + tmpString + "} "  # } 뒤에 한칸 공백
     paper.put(rgbString)  # 사용자에게 사진을 보여줌
@@ -65,16 +67,19 @@ def func_exit():
 def Make_B():
     try:
         global XSIZE, YSIZE, inImage
-        rgbString = ""
+        value =0
+        newdata=0
+        value = askinteger('밝게 만들기', '값입력', minvalue=1, maxvalue=255)
         for i in range(0, XSIZE):
-            tmpString = ""
             for k in range(0, YSIZE):
-                data = inImage[i][k] + 128
+                data = inImage[i][k] + value
                 if data > 255:  # 최대 범위인 255를 넘어가는 데이터의 값을 255로 설정
-                    data = 255
-                tmpString += "#%02x%02x%02x " % (data, data, data)  # x 뒤에 한칸 공백
-            rgbString += "{" + tmpString + "} "  # } 뒤에 한칸 공백
-        paper.put(rgbString)
+                    newdata = 255
+                else:
+                    newdata = data
+                inImage[i][k]=newdata
+
+        displayImage(inImage)
     except IndexError:
         messagebox.showinfo(title="ERROR!", message="사진을 먼저 추가해주세요.")
 
@@ -82,16 +87,19 @@ def Make_B():
 def Make_D():
     try:
         global XSIZE, YSIZE, inImage
-        rgbString = ""
+        value =0
+        newdata=0
+        value = askinteger('어둡게 만들기', '값입력', minvalue=1, maxvalue=255)
         for i in range(0, XSIZE):
-            tmpString = ""
             for k in range(0, YSIZE):
-                data = inImage[i][k] - 128
-                if data < 0:  # 최소 범위인 0보다 작은 데이터의 값을 0으로 설정
-                    data = 0
-                tmpString += "#%02x%02x%02x " % (data, data, data)  # x 뒤에 한칸 공백
-            rgbString += "{" + tmpString + "} "  # } 뒤에 한칸 공백
-        paper.put(rgbString)
+                data = inImage[i][k] - value
+                if data < 0:  # 최대 범위인 255를 넘어가는 데이터의 값을 255로 설정
+                    newdata = 0
+                else:
+                    newdata = data
+                inImage[i][k]=newdata
+
+        displayImage(inImage)
     except IndexError:
         messagebox.showinfo(title="ERROR!", message="사진을 먼저 추가해주세요.")
 
@@ -99,14 +107,13 @@ def Make_D():
 def Make_deca():
     try:
         global XSIZE, YSIZE, inImage
-        rgbString = ""
+        newdata=0
         for i in range(0, XSIZE):
-            tmpString = ""
             for k in range(0, YSIZE):
-                data = 255 - inImage[i][k]  # 흑백 반전
-                tmpString += "#%02x%02x%02x " % (data, data, data)  # x 뒤에 한칸 공백
-            rgbString += "{" + tmpString + "} "  # } 뒤에 한칸 공백
-        paper.put(rgbString)
+                data = inImage[i][k]  # 흑백 반전
+                newdata = 255-data
+                inImage[i][k]=newdata
+        displayImage(inImage)
     except IndexError:
         messagebox.showinfo(title="ERROR!", message="사진을 먼저 추가해주세요.")
 
@@ -114,6 +121,7 @@ def Make_deca():
 ## 전역 변수 선언 부분 ##
 window, canvas, paper = None, None, None  # 세 개의 변수를 None으로 설정
 XSIZE, YSIZE = 256, 256
+filename=''
 inImage = []  # 2차원 리스트 (메모리)
 
 ## 메인 코드 부분 ##
